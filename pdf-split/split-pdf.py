@@ -1,8 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox
-import PyPDF2
+from PyPDF2 import PdfReader, PdfWriter
 import os
-import threading
 
 
 def select_pdf():
@@ -14,8 +13,8 @@ def select_pdf():
 
         # Read the PDF file and display the number of pages
         with open(file_path, "rb") as file:
-            reader = PyPDF2.PdfReader(file)
-            total_pages.set(reader.num_pages)  # Update the total_pages variable
+            reader = PdfReader(file)
+            total_pages.set(len(reader.pages))  # Update the total_pages variable
 
         # Update global variable with the file path
         selected_pdf.set(file_path)
@@ -35,19 +34,16 @@ def split_pdf():
     if not save_directory:
         return
 
-    # Get user preferences
-    split_every_page = split_every_page_var.get()
-    extract_pages_entry = extract_pages_var.get()
+    # Read the PDF file and split it into individual pages
+    with open(file_path, "rb") as file:
+        reader = PdfReader(file)
+        for page_num, page in enumerate(reader.pages):
+            output_file_path = os.path.join(save_directory, f"page_{page_num+1}.pdf")
+            with open(output_file_path, "wb") as output_file:
+                output_file.write(page.getBytes())
 
-    # Disable the button to prevent multiple processes
-    split_pdf_button.config(state=tk.DISABLED)
-
-    # Start the splitting process in a new thread to prevent UI freezing
-    threading.Thread(
-        target=split_pdf_thread,
-        args=(file_path, save_directory, split_every_page, extract_pages_entry),
-        daemon=True,
-    ).start()
+    # Show a message box when the splitting is complete
+    messagebox.showinfo("Split PDF", "PDF splitting complete.")
 
 
 def split_pdf_thread(file_path, save_directory, split_every_page, extract_pages_entry):
@@ -56,12 +52,12 @@ def split_pdf_thread(file_path, save_directory, split_every_page, extract_pages_
     try:
         # Open the source PDF file
         with open(file_path, "rb") as file:
-            reader = PyPDF2.PdfReader(file)
+            reader = PdfReader(file)
 
             if split_every_page:
                 # Split every page into a new PDF
                 for i in range(len(reader.pages)):
-                    writer = PyPDF2.PdfWriter()
+                    writer = PdfWriter()
                     writer.add_page(reader.pages[i])
 
                     with open(f"{save_directory}/page_{i+1}.pdf", "wb") as new_file:
@@ -69,7 +65,7 @@ def split_pdf_thread(file_path, save_directory, split_every_page, extract_pages_
             elif extract_pages_entry:
                 # Extract specific pages
                 pages = list(map(int, extract_pages_entry.split("-")))
-                writer = PyPDF2.PdfWriter()
+                writer = PdfWriter()
 
                 for i in range(pages[0] - 1, pages[1]):
                     writer.add_page(reader.pages[i])

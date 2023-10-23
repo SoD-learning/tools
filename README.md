@@ -15,4 +15,5 @@ As an educator, I'm often using PDFs in the classroom. Here are some of the PDF-
 | NAME                                     | DESCRIPTION                                            |
 | ---------------------------------------- | ------------------------------------------------------ |
 | [Image to PDF Convertor](/image-to-pdf/) | Combines and converts images into a single PDF.        |
+| [PDF Draw](/pdf-draw/)                   | WIP: Allow for drawing on a PDF.                       |
 | [PDF Splitter](/pdf-split/)              | Split every page, by page range, or cherry pick pages. |

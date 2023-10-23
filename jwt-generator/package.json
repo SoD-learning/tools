@@ -1,0 +1,11 @@
+{
+  "name": "jwt-generator",
+  "version": "1.0.0",
+  "description": "Generates a 128-character hexadecimal string.",
+  "main": "generateKey.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Sound of Dialup",
+  "license": "ISC"
+}

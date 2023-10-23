@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import filedialog, messagebox
+from tkinter import filedialog, messagebox, simpledialog
 from PyPDF2 import PdfReader, PdfWriter
 import os
 
@@ -29,21 +29,54 @@ def split_pdf():
         messagebox.showerror("No file", "No file selected for splitting.")
         return
 
-    # Define the save path for the split PDFs
     save_directory = filedialog.askdirectory()
     if not save_directory:
         return
 
-    # Read the PDF file and split it into individual pages
-    with open(file_path, "rb") as file:
-        reader = PdfReader(file)
-        for page_num, page in enumerate(reader.pages):
-            output_file_path = os.path.join(save_directory, f"page_{page_num+1}.pdf")
-            with open(output_file_path, "wb") as output_file:
-                output_file.write(page.getBytes())
+    try:
+        reader = PdfReader(file_path)
+        split_every_page = split_every_page_var.get()
 
-    # Show a message box when the splitting is complete
-    messagebox.showinfo("Split PDF", "PDF splitting complete.")
+        if split_every_page:
+            # If the user opts to split every page, handle this separately
+            for i in range(len(reader.pages)):
+                writer = PdfWriter()
+                writer.add_page(reader.pages[i])
+                output_file_path = os.path.join(save_directory, f"page_{i+1}.pdf")
+                with open(output_file_path, "wb") as output_file:
+                    writer.write(output_file)
+        else:
+            # Handle the case for specific page extraction
+            output_file_base = simpledialog.askstring(
+                "Output File", "Enter base name for output file(s):"
+            )
+            if not output_file_base:
+                return
+
+            extract_pages_str = extract_pages_var.get()
+
+            # Check if the user wants to extract specific pages (non-range)
+            if "," in extract_pages_str:
+                selected_pages = [
+                    int(page.strip()) - 1 for page in extract_pages_str.split(",")
+                ]  # 0-indexed
+            else:
+                # For ranges like "2-4", convert it to a list of pages
+                start_page, end_page = map(int, extract_pages_str.split("-"))
+                selected_pages = list(range(start_page - 1, end_page))  # 0-indexed
+
+            writer = PdfWriter()
+            for i in selected_pages:
+                writer.add_page(reader.pages[i])
+
+            output_file_path = os.path.join(save_directory, f"{output_file_base}.pdf")
+            with open(output_file_path, "wb") as output_file:
+                writer.write(output_file)
+
+        messagebox.showinfo("Split PDF", "PDF splitting complete.")
+
+    except Exception as e:
+        messagebox.showerror("Error", f"An error occurred: {e}")
 
 
 def split_pdf_thread(file_path, save_directory, split_every_page, extract_pages_entry):

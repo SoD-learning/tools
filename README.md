@@ -14,6 +14,6 @@ As an educator, I'm often using PDFs in the classroom. Here are some of the PDF-
 
 | NAME                                            | DESCRIPTION                                            |
 | ----------------------------------------------- | ------------------------------------------------------ |
-| [Image to PDF Convertor](/python/image-to-pdf/) | Combines and converts images into a single PDF.        |
+| [Image to PDF Converter](/python/image-to-pdf/) | Combines and converts images into a single PDF.        |
 | [PDF Draw](/python/pdf-draw/)                   | WIP: Allow for drawing on a PDF.                       |
 | [PDF Splitter](/python/pdf-split/)              | Split every page, by page range, or cherry pick pages. |

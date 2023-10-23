@@ -3,7 +3,6 @@ from tkinter import filedialog, messagebox
 from PIL import Image
 from fpdf import FPDF
 import threading
-import os
 
 
 def select_files():
@@ -13,8 +12,7 @@ def select_files():
     if files:
         listbox_files.delete(0, tk.END)  # Clear the current list
         for file in files:
-            filename = os.path.basename(file)  # Extract only the file's name
-            listbox_files.insert(tk.END, filename)  # Add file to the listbox
+            listbox_files.insert(tk.END, file)  # Add the full file path to the listbox
         convert_button.config(state=tk.NORMAL)  # Enable the convert button
         status_label.config(text="Files selected. Ready to convert.")
 
@@ -100,8 +98,8 @@ app = tk.Tk()
 app.title("Image to PDF Converter")
 
 # Create a title label to the application
-title_label = tk.Label(app, text="Image to PDF", font=("Helvetica", 16, "bold"))
-title_label.pack(pady=5)
+title_label = tk.Label(app, text="Image to PDF", font=("Helvetica", 24, "bold"))
+title_label.pack(pady=40)
 
 # Create instructions for the user
 instructions_label_1 = tk.Label(
@@ -162,7 +160,7 @@ current_task_label.pack(pady=5)
 spinner_canvas = tk.Canvas(
     app, width=30, height=30, bg=app.cget("bg"), highlightthickness=0
 )  # Removed background
-spinner_canvas.pack(pady=5)
+spinner_canvas.pack(pady=20)
 spinner_canvas.pack_forget()  # Initially, the spinner is not visible
 spinner_thread = threading.Thread(target=spinner, args=(spinner_canvas, 0), daemon=True)
 spinner_thread.start()
@@ -176,7 +174,7 @@ padding = 40  # Additional space to accommodate paddings, borders, etc.
 window_width = len(longest_message) * estimated_font_size + padding
 
 app.geometry(
-    f"{window_width}x500"
+    f"{window_width}x650"
 )  # Adjusting the window's size; height is kept the same for consistency
 
 app.mainloop()
